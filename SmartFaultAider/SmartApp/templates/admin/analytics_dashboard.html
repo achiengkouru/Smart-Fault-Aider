@@ -1,0 +1,42 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 style="color:#ff5e62;">Chatbot Analytics Dashboard</h1>
+    <div class="row mt-4">
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Chats</h5>
+                    <p class="card-text display-6">{{ total_chats }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Flagged Responses</h5>
+                    <p class="card-text display-6">{{ flagged }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card border-danger">
+                <div class="card-body">
+                    <h5 class="card-title">Not Helpful</h5>
+                    <p class="card-text display-6">{{ not_helpful }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card border-success">
+                <div class="card-body">
+                    <h5 class="card-title">Chats with Attachments</h5>
+                    <p class="card-text display-6">{{ with_attachments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="/admin/" class="btn btn-secondary mt-4">Back to Admin</a>
+</div>
+{% endblock %}

@@ -1,3 +1,19 @@
+# Caching (in-memory for development; use Memcached/Redis in production)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-sfa-cache',
+    }
+}
+# Media files (profile pictures, uploads)
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+# Email settings for admin notifications
+import os
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ADMINS = [('Admin', os.getenv('ADMIN_EMAIL', 'admin@example.com'))]
 """
 Django settings for SmartFaultAider project.
 
@@ -42,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'SmartApp',
+    'import_export',
 ]
 
 MIDDLEWARE = [

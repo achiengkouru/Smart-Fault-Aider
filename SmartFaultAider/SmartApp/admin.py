@@ -1,3 +1,19 @@
+from django.contrib.admin.views.decorators import staff_member_required
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+# Simple analytics dashboard view
+@staff_member_required
+def analytics_dashboard(request):
+    total_chats = ChatLog.objects.count()
+    flagged = ChatLog.objects.filter(feedback='flag').count()
+    not_helpful = ChatLog.objects.filter(feedback='bad').count()
+    with_attachments = ChatLog.objects.exclude(attachment='').exclude(attachment=None).count()
+    return render(request, 'admin/analytics_dashboard.html', {
+        'total_chats': total_chats,
+        'flagged': flagged,
+        'not_helpful': not_helpful,
+        'with_attachments': with_attachments,
+    })
 # SmartApp/admin.py
 
 from django.contrib import admin
@@ -10,6 +26,14 @@ from django import forms
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.shortcuts import render
+from .models import IssueLog, ChatLog, UserProfile, Asset
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+class ChatLogAdmin(admin.ModelAdmin):
+    list_display = ['user', 'user_input', 'bot_response', 'feedback', 'timestamp']
+    list_filter = ['feedback', 'timestamp', 'user']
+    search_fields = ['user_input', 'bot_response']
+
 
 # Form to reset password
 class PasswordResetForm(forms.Form):
@@ -25,6 +49,7 @@ class CustomUserAdmin(UserAdmin):
         urls = super().get_urls()
         custom_urls = [
             path('reset-password/<int:user_id>/', self.admin_site.admin_view(self.reset_password_view), name='reset_user_password'),
+            path('analytics-dashboard/', self.admin_site.admin_view(analytics_dashboard), name='analytics_dashboard'),
         ]
         return custom_urls + urls
 
@@ -57,5 +82,22 @@ class CustomUserAdmin(UserAdmin):
         )
 
 
+class AssetResource(resources.ModelResource):
+    class Meta:
+        model = Asset
+        import_id_fields = ('serial_number',)
+        fields = ('id', 'name', 'category', 'serial_number', 'status', 'department', 'user', 'shared')
+
+@admin.register(Asset)
+class AssetAdmin(ImportExportModelAdmin):
+    resource_class = AssetResource
+    list_display = ('name', 'category', 'serial_number', 'status', 'department', 'user', 'shared')
+    list_filter = ('category', 'status', 'department', 'shared')
+    search_fields = ('name', 'serial_number', 'user', 'department')
+
+
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(IssueLog)
+admin.site.register(ChatLog, ChatLogAdmin)
+admin.site.register(UserProfile)

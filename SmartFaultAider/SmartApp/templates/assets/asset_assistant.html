@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .asset-assistant-bg {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+    min-height: 100vh;
+  }
+  .asset-chat-box {
+    height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(80, 112, 255, 0.10);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .asset-message {
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: flex-end;
+  }
+  .asset-message.user {
+    justify-content: flex-end;
+  }
+  .asset-bubble {
+    max-width: 70%;
+    padding: 0.75rem 1.2rem;
+    border-radius: 18px;
+    font-size: 1.05rem;
+    box-shadow: 0 2px 8px rgba(80, 112, 255, 0.07);
+  }
+  .asset-bubble.user {
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+    color: #fff;
+    border-bottom-right-radius: 6px;
+  }
+  .asset-bubble.assistant {
+    background: #f1f5f9;
+    color: #222;
+    border-bottom-left-radius: 6px;
+    border: 1px solid #e0e7ff;
+  }
+  .asset-assistant-title {
+    font-weight: 700;
+    color: #6366f1;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .asset-input-group .form-control {
+    border-radius: 18px 0 0 18px;
+    border: 1px solid #c7d2fe;
+    background: #f1f5f9;
+  }
+  .asset-input-group .btn {
+    border-radius: 0 18px 18px 0;
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+    color: #fff;
+    border: none;
+  }
+  .asset-input-group .btn:hover {
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+  }
+</style>
+<div class="container py-4 asset-assistant-bg">
+  <h2 class="asset-assistant-title">Asset Assistant</h2>
+  <form method="post" action="{% url 'clear_asset_chats' %}" style="text-align:right; margin-bottom:1rem;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear all asset chats?');">Clear Chats</button>
+  </form>
+  <div id="chat-box" class="asset-chat-box">
+    {% for message in messages %}
+      <div class="asset-message {% if message.sender == 'You' %}user{% else %}assistant{% endif %}">
+        <div class="asset-bubble {% if message.sender == 'You' %}user{% else %}assistant{% endif %}">
+          <strong style="font-size:0.95em;">{{ message.sender }}:</strong> {{ message.text }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <form method="post" id="chat-form" autocomplete="off">
+    {% csrf_token %}
+    <div class="input-group asset-input-group">
+      <input type="text" name="user_input" id="user_input" class="form-control" placeholder="Ask about school assets..." autofocus required>
+      <button type="submit" class="btn">Send</button>
+    </div>
+  </form>
+</div>
+<script>
+  // Auto-scroll chat box to bottom
+  var chatBox = document.getElementById('chat-box');
+  if (chatBox) { chatBox.scrollTop = chatBox.scrollHeight; }
+  // Optional: submit on Enter
+  document.getElementById('user_input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.getElementById('chat-form').submit();
+    }
+  });
+</script>
+{% endblock %}

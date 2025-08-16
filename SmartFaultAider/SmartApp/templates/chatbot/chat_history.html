@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat History | SmartFaultAider{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4" style="color:#ff5e62;">Your Chat History</h2>
+    {% if user_chats %}
+        <div class="list-group">
+            {% for chat in user_chats %}
+                <div class="list-group-item mb-3" style="border-radius:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+                    <div><strong>You:</strong> {{ chat.user_input }}</div>
+                    <div class="mt-2"><strong>Bot:</strong> {{ chat.bot_response|linebreaksbr }}</div>
+                    <div class="text-muted mt-2" style="font-size:0.9rem;">{{ chat.timestamp|date:"M d, Y H:i" }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no chat history yet.</p>
+    {% endif %}
+    <a href="{% url 'chatbot' %}" class="btn btn-primary mt-4">Back to Chatbot</a>
+</div>
+{% endblock %}

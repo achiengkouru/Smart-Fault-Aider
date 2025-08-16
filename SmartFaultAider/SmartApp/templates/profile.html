@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Profile | SmartFaultAider{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow-lg border-0" style="max-width: 600px; width:100%; background: linear-gradient(135deg, #f8fafc 60%, #e3f0ff 100%);">
+    <div class="card-body p-5 text-center">
+      <div class="mb-3">
+        {% if profile.profile_pic %}
+          <img src="{{ profile.profile_pic.url }}" class="rounded-circle border border-3 border-primary shadow" style="width: 140px; height: 140px; object-fit: cover; background: #fff;">
+        {% else %}
+          <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=0d6efd&color=fff&size=140" class="rounded-circle border border-3 border-primary shadow" style="width: 140px; height: 140px;">
+        {% endif %}
+      </div>
+      <h2 class="fw-bold mb-1" style="color: #0d6efd;">{{ user.username }}</h2>
+      <div class="mb-2">
+        {% if user.is_superuser %}
+          <span class="badge bg-danger fs-6">Admin</span>
+        {% elif user.is_staff %}
+          <span class="badge bg-warning text-dark fs-6">Staff</span>
+        {% else %}
+          <span class="badge bg-secondary fs-6">User</span>
+        {% endif %}
+      </div>
+      <p class="text-muted mb-2" style="font-size: 1.15rem;">Joined: {{ user.date_joined|date:"Y-m-d" }}</p>
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-success py-1 my-2">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      <form method="post" enctype="multipart/form-data" class="text-start mt-3 mb-2">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_email" class="form-label"><strong>Email:</strong></label>
+          {{ form.email }}
+        </div>
+        <div class="mb-3">
+          <label for="id_profile_pic" class="form-label"><strong>Profile Picture:</strong></label>
+          {{ form.profile_pic }}
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <button type="submit" class="btn btn-primary btn-lg px-4">Update Profile</button>
+          <a href="/accounts/password_change/" class="btn btn-outline-secondary btn-lg ms-2">Change Password</a>
+        </div>
+      </form>
+      <hr class="my-4">
+      <h4 class="mb-3" style="color: #0d6efd;">Chat Statistics</h4>
+      <div class="row g-3 mb-2">
+        <div class="col-6 col-md-4">
+          <div class="bg-light rounded-3 p-3 shadow-sm text-center">
+            <div class="fw-bold" style="color:#495057;">Total</div>
+            <div class="badge bg-secondary fs-5">{{ total_chats }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-4">
+          <div class="bg-light rounded-3 p-3 shadow-sm text-center">
+            <div class="fw-bold" style="color:#198754;">Helpful</div>
+            <div class="badge bg-success fs-5">{{ helpful }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-4">
+          <div class="bg-light rounded-3 p-3 shadow-sm text-center">
+            <div class="fw-bold" style="color:#ffc107;">Not Helpful</div>
+            <div class="badge bg-warning text-dark fs-5">{{ not_helpful }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-6">
+          <div class="bg-light rounded-3 p-3 shadow-sm text-center">
+            <div class="fw-bold" style="color:#dc3545;">Flagged</div>
+            <div class="badge bg-danger fs-5">{{ flagged }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-6">
+          <div class="bg-light rounded-3 p-3 shadow-sm text-center">
+            <div class="fw-bold" style="color:#0dcaf0;">With Attachments</div>
+            <div class="badge bg-info text-dark fs-5">{{ with_attachments }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

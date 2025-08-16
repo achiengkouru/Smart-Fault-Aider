@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Asset Debug View</h1>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Department</th>
+            <th>Serial Number</th>
+            <th>Status</th>
+            <th>User</th>
+            <th>Shared</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for asset in assets %}
+        <tr>
+            <td>{{ asset.name }}</td>
+            <td>{{ asset.category }}</td>
+            <td>{{ asset.department }}</td>
+            <td>{{ asset.serial_number }}</td>
+            <td>{{ asset.status }}</td>
+            <td>{{ asset.user }}</td>
+            <td>{{ asset.shared }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No assets found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
